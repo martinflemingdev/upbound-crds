@@ -1,0 +1,1 @@
+https://github.com/crossplane-contrib/provider-upjet-gcp/tree/main/package/crds
