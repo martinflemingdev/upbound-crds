@@ -9,3 +9,39 @@ spec:
     member: "serviceAccount:service-account-b@project-b-id.iam.gserviceaccount.com"
   providerConfigRef:
     name: gcp-provider
+---
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: BucketIAMMember
+metadata:
+  name: bucket-a-access
+spec:
+  forProvider:
+    bucket: bucket-a
+    role: projects/project-a-id/roles/CustomStorageReader  # 👈 Project-level role
+    member: "serviceAccount:service-account-b@project-b-id.iam.gserviceaccount.com"
+  providerConfigRef:
+    name: gcp-provider
+---
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: BucketIAMMember
+metadata:
+  name: bucket-a-access
+spec:
+  forProvider:
+    bucket: bucket-a
+    role: organizations/your-org-id/roles/OrgStorageReader  # 👈 Org-level role
+    member: "serviceAccount:service-account-b@project-b-id.iam.gserviceaccount.com"
+  providerConfigRef:
+    name: gcp-provider
+---
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: BucketIAMMember
+metadata:
+  name: bucket-a-access
+spec:
+  forProvider:
+    bucket: bucket-a
+    role: roles/storage.objectViewer  # 👈 Built-in GCP role
+    member: "serviceAccount:service-account-b@project-b-id.iam.gserviceaccount.com"
+  providerConfigRef:
+    name: gcp-provider
