@@ -1,0 +1,11 @@
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: BucketIAMMember
+metadata:
+  name: bucket-a-access
+spec:
+  forProvider:
+    bucket: bucket-a
+    role: projects/project-a-id/roles/CustomStorageReader
+    member: "serviceAccount:service-account-b@project-b-id.iam.gserviceaccount.com"
+  providerConfigRef:
+    name: gcp-provider
