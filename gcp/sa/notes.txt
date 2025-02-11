@@ -1,0 +1,25 @@
+✅ You can only use ServiceAccountIAMMember to:
+
+Allow a user, group, or another service account to impersonate a service account (e.g., roles/iam.serviceAccountUser).
+Allow a user, group, or another service account to manage the service account itself (e.g., roles/iam.serviceAccountAdmin, roles/iam.serviceAccountKeyAdmin).
+🚫 You cannot use ServiceAccountIAMMember to assign service-specific roles like roles/storage.admin, roles/bigquery.admin, etc. Those must be applied at the project or resource level using ProjectIAMMember.
+
+✅ Valid Roles for ServiceAccountIAMMember
+Role	Purpose
+roles/iam.serviceAccountUser	Allows a user, group, or another service account to impersonate the service account.
+roles/iam.serviceAccountTokenCreator	Allows a user, group, or another service account to generate OAuth 2.0 access tokens using the service account. Useful for API authentication.
+roles/iam.serviceAccountAdmin	Grants full management permissions on the service account (create, delete, update IAM policies, and manage keys).
+roles/iam.serviceAccountKeyAdmin	Allows a user, group, or another service account to create and manage service account keys (i.e., private key files for authentication).
+roles/iam.serviceAccountKeyReader	Allows a user to view existing service account keys but not create or delete them.
+roles/iam.serviceAccountCredentialsAdmin	Allows a user to sign JWTs and generate identity tokens using the service account credentials.
+roles/iam.serviceAccountViewer	Grants read-only access to view service account details but not modify them.
+
+When to Use Each Role
+Use Case	Role
+Allow a user or group to impersonate a service account	roles/iam.serviceAccountUser
+Allow a user or another service account to generate OAuth 2.0 tokens for authentication	roles/iam.serviceAccountTokenCreator
+Allow an admin to fully manage the service account (create, delete, update IAM policies)	roles/iam.serviceAccountAdmin
+Allow a user or system to create and manage service account private keys	roles/iam.serviceAccountKeyAdmin
+Allow a user to view service account keys but not create or delete them	roles/iam.serviceAccountKeyReader
+Allow a user to sign JWTs or generate identity tokens	roles/iam.serviceAccountCredentialsAdmin
+Allow a user to view service account details without modifying them	roles/iam.serviceAccountViewer
