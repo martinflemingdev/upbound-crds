@@ -1,11 +1,11 @@
 apiVersion: cloudplatform.gcp.upbound.io/v1beta1
 kind: ServiceAccountIAMMember
 metadata:
-  name: sa-impersonation-group
+  name: sa-impersonation-sa
 spec:
   forProvider:
-    member: "group:devops@example.com"  # A Google group
-    role: "roles/iam.serviceAccountKeyAdmin"  # Can manage and retrieve service account keys
+    member: "serviceAccount:ci-system@example-project.iam.gserviceaccount.com"  # Another service account
+    role: "roles/iam.serviceAccountUser"  # Allows impersonation
     serviceAccountIdSelector:
       matchLabels:
         example.com/name: my-service-account

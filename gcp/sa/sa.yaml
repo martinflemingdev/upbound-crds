@@ -1,11 +1,11 @@
 apiVersion: cloudplatform.gcp.upbound.io/v1beta1
-kind: ServiceAccountIAMMember
+kind: ServiceAccount
 metadata:
-  name: sa-impersonation-sa
+  name: test-rotate-sa-keys
 spec:
   forProvider:
-    member: "serviceAccount:ci-system@example-project.iam.gserviceaccount.com"  # Another service account
-    role: "roles/iam.serviceAccountUser"  # Allows impersonation
-    serviceAccountIdSelector:
-      matchLabels:
-        example.com/name: my-service-account
+    createIgnoreAlreadyExists: true
+    description: sa for testing key rotation
+    disabled: false
+    displayName: Test Rotate SA keys
+    project: axial-life-395119
