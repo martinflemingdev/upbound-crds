@@ -1,0 +1,24 @@
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccountKey
+metadata:
+  name: test-rotate-sa-keys-key
+spec:
+  deletionPolicy: Delete
+  # managementPolicies:
+    # - Observe
+    # - Update
+    # - Delete
+  forProvider:
+    serviceAccountId: projects/axial-life-395119/serviceAccounts/test-rotate-sa-keys@axial-life-395119.iam.gserviceaccount.com
+    keyAlgorithm: KEY_ALG_RSA_2048
+    privateKeyType: TYPE_GOOGLE_CREDENTIALS_FILE
+    keepers:
+      rotationDate: "2025-02-11"
+  writeConnectionSecretToRef:
+    name: test-rotate-sa-keys
+    namespace: crossplane-system
+
+# e155493681e4186577a7491538e007f2322eaaba
+
+# kubectl get secret test-rotate-sa-keys -n crossplane-system -o jsonpath="{.data.private_key}" | base64 --decode
+# kubectl get secret test-rotate-sa-keys -n crossplane-system -o json | jq -r '.data["attribute.private_key"]' | base64 --decode

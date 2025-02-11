@@ -1,0 +1,146 @@
+"keepers"
+
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccountKey
+metadata:
+  name: test-rotate-sa-keys-key
+spec:
+  forProvider:
+    serviceAccountRef:
+      name: test-rotate-sa-keys
+    keyAlgorithm: KEY_ALG_RSA_2048
+    privateKeyType: TYPE_GOOGLE_CREDENTIALS_FILE
+    keepers:
+      rotationDate: "2025-02-11"
+
+🔹 What is keepers in Crossplane?
+keepers is an arbitrary key-value map that acts as a trigger for resource recreation.
+If any value in keepers changes, Crossplane deletes the old key and provisions a new one.
+This is useful for automating key rotation without manually deleting/recreating keys.
+
+How Does This Work?
+Every time rotationDate changes, Crossplane:
+Creates a new key for the service account.
+Deletes the old key (Crossplane will manage the lifecycle).
+You can manually update rotationDate on a fixed schedule (e.g., monthly, quarterly).
+Alternatively, you can use a script or automation tool to update the value dynamically.
+
+🔹 Benefits of Using keepers
+✔ Automated Key Rotation → No manual deletion needed.
+✔ Ensures No More Than 10 Keys Exist → Old keys are automatically replaced.
+✔ Minimizes Human Error → Avoids forgetting key rotations.
+
+
+"keyAlgorithm"
+
+If keyAlgorithm is not specified, Google Cloud defaults to:
+
+✅ KEY_ALG_RSA_2048 (RSA 2048-bit)
+
+This is the most widely supported option and is secure for most use cases.
+
+2️⃣ Supported Values
+Key Algorithm	Description
+KEY_ALG_RSA_2048	✅ Default. 2048-bit RSA key (widely used & secure).
+KEY_ALG_RSA_3072	🛡️ More secure than RSA 2048, recommended for compliance-heavy environments.
+KEY_ALG_RSA_4096	🔐 Highest RSA security level, but has more CPU overhead.
+KEY_ALG_UNSPECIFIED	🚫 Not recommended; defaults to RSA 2048.
+
+4️⃣ When to Choose Which Key Algorithm?
+Use Case	Recommended Key Algorithm
+General use cases	KEY_ALG_RSA_2048 (default)
+Security compliance (e.g., FedRAMP, PCI DSS)	KEY_ALG_RSA_3072
+Max security (e.g., highly sensitive data)	KEY_ALG_RSA_4096
+If unsure	KEY_ALG_RSA_2048
+Tradeoff: Higher key strength = More CPU usage (especially for signing operations).
+
+
+"privateKeyType"
+
+🔹 privateKeyType
+This defines the format of the private key that is generated for the service account.
+It determines how you retrieve and use the private key for authentication.
+
+Supported Values:
+Value	Description
+TYPE_GOOGLE_CREDENTIALS_FILE	✅ Default. Generates a JSON private key file. Used for gcloud auth activate-service-account and most authentication scenarios.
+TYPE_PKCS12_FILE	🚫 Deprecated. Generates a .p12 format key. Used for older applications.
+
+Example: Using privateKeyType
+
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccountKey
+metadata:
+  name: my-sa-key
+spec:
+  forProvider:
+    serviceAccountRef:
+      name: my-service-account
+    privateKeyType: TYPE_GOOGLE_CREDENTIALS_FILE  # Default, recommended
+
+✅ Use TYPE_GOOGLE_CREDENTIALS_FILE unless you have a legacy system requiring .p12.
+
+
+"publicKeyData"
+
+🔹 publicKeyData
+This field is only used for user-managed public keys.
+If you manually upload a public key instead of having Google generate a key, this is where you provide it.
+
+How It Works:
+Instead of generating a key pair, you upload your own public key.
+Google associates the key with the Service Account but does not generate a private key.
+
+Example: Manually Uploading a Public Key
+
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccountKey
+metadata:
+  name: my-uploaded-key
+spec:
+  forProvider:
+    serviceAccountRef:
+      name: my-service-account
+    publicKeyData: "BASE64_ENCODED_PUBLIC_KEY"
+
+🚨 Note: You must manually generate the private key outside of Google Cloud.
+
+
+"publicKeyType"
+
+🔹 publicKeyType
+This field determines the format of the public key returned by Google when it generates a key pair.
+
+Supported Values:
+Value	Description
+TYPE_NONE	✅ Default. No public key is returned.
+TYPE_X509_PEM_FILE	📜 Returns a public key in PEM format (Base64-encoded .pem file).
+TYPE_RAW_PUBLIC_KEY	🔑 Returns a raw RSA public key.
+
+Example: Requesting a PEM-Formatted Public Key
+
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccountKey
+metadata:
+  name: my-sa-key
+spec:
+  forProvider:
+    serviceAccountRef:
+      name: my-service-account
+    privateKeyType: TYPE_GOOGLE_CREDENTIALS_FILE
+    publicKeyType: TYPE_X509_PEM_FILE  # Get a PEM-formatted public key
+
+Useful for applications that need to verify JWT signatures.
+If omitted, Google does not return the public key.
+
+🔹 Comparison Table
+Field	Purpose	When to Use?	Default Value
+privateKeyType	Specifies the private key format	Always required if generating a key	TYPE_GOOGLE_CREDENTIALS_FILE
+publicKeyData	Allows you to upload your own public key	Only if you're manually managing keys	None
+publicKeyType	Specifies the format of the returned public key	Only if you need the public key for JWT verification	TYPE_NONE
+
+🔹 Key Takeaways
+✅ Most users only need privateKeyType: TYPE_GOOGLE_CREDENTIALS_FILE.
+⚠️ Use publicKeyData only if you upload your own key (rare case).
+🔐 If you need a public key, set publicKeyType: TYPE_X509_PEM_FILE.
+
