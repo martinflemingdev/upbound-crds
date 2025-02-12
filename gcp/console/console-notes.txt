@@ -1,0 +1,15 @@
+i have martin.mf65@gmail.com representing the "platform" 
+I have martinflemingdev@gmail.com representing the "consumer"
+
+at first, the consumer cannot see the project at all in the GCP Console
+
+they need roles/viewer or perhaps a custom role that gives the bare minimum of 
+
+# resourcemanager.projects.get → Allows user to see the project in GCP.
+# resourcemanager.projects.list → Allows user to list projects they have access to.
+# iam.serviceAccounts.list → Allows user to see service accounts.
+
+after that, they need a ServiceAccountIAMMember binding with role: "roles/iam.serviceAccountKeyAdmin" for their user:email and the serviceAccountID
+
+this should be elevated and time bound
+

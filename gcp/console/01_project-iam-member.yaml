@@ -1,0 +1,15 @@
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ProjectIAMMember
+metadata:
+  name: project-iam-member-browser-sa-key
+spec:
+  forProvider:
+    member: "user:martinflemingdev@gmail.com"
+    project: axial-life-395119
+    role: roles/viewer
+
+# ✅ The bare minimum permissions needed to see the project, IAM menu, and Service Accounts:
+
+# resourcemanager.projects.get → Allows user to see the project in GCP.
+# resourcemanager.projects.list → Allows user to list projects they have access to.
+# iam.serviceAccounts.list → Allows user to see service accounts.
