@@ -1,0 +1,1 @@
+kubectl get datasetiammembers -o custom-columns="NAME:.metadata.name,SYNCED:.status.conditions[?(@.type=='Synced')].status" --no-headers | awk '$2 == "False" {print $1}' | xargs -I{} kubectl patch datasetiammembers {} --type='merge' -p '{"metadata":{"finalizers":[]}}'
